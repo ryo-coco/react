@@ -1,0 +1,9 @@
+{
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/api/pairing/route": "app/api/pairing/route.js",
+  "/api/groupLeague/route": "app/api/groupLeague/route.js",
+  "/api/countries/route": "app/api/countries/route.js",
+  "/api/players/route": "app/api/players/route.js",
+  "/api/point_ranking/route": "app/api/point_ranking/route.js",
+  "/page": "app/page.js"
+}
