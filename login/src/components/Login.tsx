@@ -2,6 +2,7 @@
 import { FormEvent, useState, useEffect } from "react";
 import { UserInfo } from "../type/userinfo";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 import Link from "next/link";
 import bcrypt from "bcryptjs";
 
@@ -13,6 +14,7 @@ export default function Login() {
   const [userInfo, setUserInfo] = useState<UserInfo[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
+  const { setUser } = useUser();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -67,6 +69,7 @@ export default function Login() {
             } else if (isMatch) {
               setError(`パスワードが一致しました。ユーザ名：${username}`);
               updateLoginAttemptsOrLock(username, 0, false);
+              setUser(userInfo[0]);
               setTimeout(() => {
                 router.push("/Homepage");
               }, 1000);
@@ -120,7 +123,7 @@ export default function Login() {
       // console.log(`${result}`);
 
       if (result.status === "success") {
-        console.log("失敗回数更新、ロック成功");
+        console.log("更新成功");
       } else {
         console.error("失敗回数更新、ロック失敗:", result.message);
       }
