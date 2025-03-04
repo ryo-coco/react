@@ -73,18 +73,20 @@ export async function POST(request: NextRequest) {
   });
 
   try {
-    const { username, login_attempts, locked } = await request.json();
+    const { id, login_attempts, locked } = await request.json();
 
     const client = await pool.connect();
-    const updateLock = locked ? ",is_locked = true" : "";
+    const updateLock = locked ? ",is_locked = true" : ",is_locked = false";
     const queryText = `
       UPDATE users
       SET login_attempts = $1, updated_at = CURRENT_TIMESTAMP, updated_by = 'system' ${updateLock}
-      WHERE username = $2
+      WHERE id = $2
       RETURNING *
     `;
 
-    const queryParams = [login_attempts, username];
+    console.log(queryText);
+
+    const queryParams = [login_attempts, id];
     const result = await client.query(queryText, queryParams);
     client.release();
 

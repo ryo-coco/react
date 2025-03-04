@@ -68,7 +68,7 @@ export default function Login() {
               );
             } else if (isMatch) {
               setError(`パスワードが一致しました。ユーザ名：${username}`);
-              updateLoginAttemptsOrLock(username, 0, false);
+              updateLoginAttemptsOrLock(userInfo[0].id, 0, false);
               setUser(userInfo[0]);
               setTimeout(() => {
                 router.push("/Homepage");
@@ -81,7 +81,7 @@ export default function Login() {
                 setError(
                   "一定回数失敗したため、ロックしました。管理者へ連絡してください"
                 );
-                updateLoginAttemptsOrLock(username, unMatchCnt, true);
+                updateLoginAttemptsOrLock(userInfo[0].id, unMatchCnt, true);
               } else {
                 // 失敗回数をカウントする。
                 setError(
@@ -89,7 +89,7 @@ export default function Login() {
                     lockCnt - unMatchCnt
                   }回失敗するとロックがかかります。`
                 );
-                updateLoginAttemptsOrLock(username, unMatchCnt, false);
+                updateLoginAttemptsOrLock(userInfo[0].id, unMatchCnt, false);
               }
             }
           }
@@ -100,37 +100,6 @@ export default function Login() {
     };
     accountCheck();
   }, [userInfo, loading, isSubmitted]);
-
-  //失敗回数をカウント、ロックフラグをONにする。
-  const updateLoginAttemptsOrLock = async (
-    username: string,
-    attempts: number,
-    locked: boolean
-  ) => {
-    try {
-      const response = await fetch("/api/userInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          login_attempts: attempts,
-          locked: locked,
-        }),
-      });
-      const result = await response.json();
-      // console.log(`${result}`);
-
-      if (result.status === "success") {
-        console.log("更新成功");
-      } else {
-        console.error("失敗回数更新、ロック失敗:", result.message);
-      }
-    } catch (error) {
-      console.error("失敗回数更新、ロックエラー:", error);
-    }
-  };
 
   return (
     <div className="xl:w-1/3 lg:w-1/2 md:w-2/3 sm:w-3/4 w-full mx-auto">
@@ -194,3 +163,34 @@ export default function Login() {
     </div>
   );
 }
+
+//失敗回数をカウント、ロックフラグをONにする。
+export const updateLoginAttemptsOrLock = async (
+  id: bigint,
+  attempts: number,
+  locked: boolean
+) => {
+  try {
+    const response = await fetch("/api/userInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+        login_attempts: attempts,
+        locked: locked,
+      }),
+    });
+    const result = await response.json();
+    // console.log(`${result}`);
+
+    if (result.status === "success") {
+      console.log("更新成功");
+    } else {
+      console.error("失敗回数更新、ロック失敗:", result.message);
+    }
+  } catch (error) {
+    console.error("失敗回数更新、ロックエラー:", error);
+  }
+};

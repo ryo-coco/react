@@ -1,11 +1,12 @@
 import Link from "next/link";
+import React from "react";
 
-export default function Sidebar({ userAuth }: any) {
+function Sidebar({ userAuth }: any) {
   console.log("Sideber");
 
   const menuItems = [
     {
-      title: "メニュー",
+      title: "",
       items: [
         { name: "ホーム", href: "/Homepage" },
         { name: "我々について", href: "/About" },
@@ -27,7 +28,7 @@ export default function Sidebar({ userAuth }: any) {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-gray-600 hover:text-gray-900 block py-1"
+                        className="text-black hover:text-gray-300 block py-1"
                       >
                         {item.name}
                       </Link>
@@ -41,3 +42,7 @@ export default function Sidebar({ userAuth }: any) {
     </nav>
   );
 }
+
+const SidebarMemo = React.memo(Sidebar);
+
+export default SidebarMemo;
