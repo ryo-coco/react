@@ -7,7 +7,10 @@ import {
   CardContent,
   CardHeader,
   Typography,
+  Stack,
   Radio,
+  Paper,
+  Divider,
   RadioGroup,
   FormControlLabel,
   Checkbox,
@@ -15,6 +18,7 @@ import {
   Box,
   FormControl,
   FormLabel,
+  TextField,
 } from "@mui/material";
 
 export default function FormWithInputs() {
@@ -46,6 +50,9 @@ export default function FormWithInputs() {
     item10: false,
   });
 
+  // テキストエリアの内容
+  const [resultText, setResultText] = useState<string>("");
+
   // チェックボックスの変更を処理するねん
   const handleCheckboxChange = (item: keyof typeof checkedItems) => {
     setCheckedItems({
@@ -71,6 +78,31 @@ export default function FormWithInputs() {
 
     // データをログに出すわ（実際のアプリではサーバーに送信するやろけど）
     console.log("送信するフォームデータ:", formData);
+  };
+
+  // 選択内容をテキストエリアに反映する処理
+  const handleReflect = () => {
+    // ラジオボタンのラベルを取得
+    const radioLabel = `オプション ${selectedOption.replace("option", "")}`;
+
+    // チェックされたチェックボックスのラベルを取得
+    const checkedLabels = Object.entries(checkedItems)
+      .filter(([_, isChecked]) => isChecked)
+      .map(([item]) => `アイテム ${item.replace("item", "")}`);
+
+    // 表示テキストを作成
+    let displayText = `選択されたラジオボタン：${radioLabel}\n`;
+    displayText += `選択されたチェックボックス：${
+      checkedLabels.length > 0 ? checkedLabels.join("、") : "なし"
+    }`;
+
+    // テキストエリアに設定
+    setResultText(displayText);
+  };
+
+  // テキストエリアをクリアする処理
+  const handleClear = () => {
+    setResultText("");
   };
 
   return (
@@ -130,7 +162,81 @@ export default function FormWithInputs() {
               ))}
             </FormGroup>
           </FormControl>
+          {/* 選択内容表示セクション */}
+          <Paper
+            elevation={2}
+            sx={{
+              p: 2,
+              bgcolor: "#f8f8f8",
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "grey.300",
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              sx={{ mb: 2, fontWeight: "medium" }}
+            >
+              選択内容の確認
+            </Typography>
+
+            <TextField
+              multiline
+              fullWidth
+              minRows={3}
+              value={resultText}
+              InputProps={{
+                readOnly: true,
+                sx: {
+                  fontFamily: "monospace",
+                  bgcolor: "white",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "grey.400",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "grey.500",
+                  },
+                },
+              }}
+              placeholder="「反映」ボタンを押すと、選択内容がここに表示されるで"
+              sx={{ mb: 2 }}
+            />
+
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReflect}
+                sx={{
+                  px: 3,
+                  "&:hover": {
+                    bgcolor: "primary.dark",
+                    transform: "translateY(-2px)",
+                    transition: "all 0.2s",
+                  },
+                }}
+              >
+                反映
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleClear}
+                sx={{
+                  px: 3,
+                  color: "grey.700",
+                  borderColor: "grey.400",
+                  "&:hover": {
+                    bgcolor: "grey.100",
+                    borderColor: "grey.600",
+                  },
+                }}
+              >
+                クリア
+              </Button>
+            </Stack>
+          </Paper>
         </CardContent>
+        <Divider sx={{ mx: 2 }} />
         <Box sx={{ p: 2 }}>
           <Button type="submit" variant="contained" fullWidth color="primary">
             送信するで
